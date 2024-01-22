@@ -2,7 +2,7 @@ from flask import Flask,render_template,request
 import pickle
 import numpy as np
 from fuzzywuzzy import process
-most_popular_df = pickle.load(open('popular.pkl','rb'))
+most_popular_df = pickle.load(open('most_popular_df.pkl','rb'))
 pt_value = pickle.load(open('pt_value.pkl','rb'))
 similarity_scores = pickle.load(open('similarity_scores.pkl','rb'))
 anime_url = pickle.load(open('anime_url.pkl','rb'))
@@ -16,7 +16,8 @@ def index():
                            anime_name =list(most_popular_df['name'].values),
                            image =list(most_popular_df['main_picture'].values),
                            votes =list(most_popular_df['num_rating'].values),
-                           rating =list(most_popular_df['avg_rating'].values)
+                           rating =list(most_popular_df['avg_rating'].values),
+                           url =list(most_popular_df['url'].values)
                           )
 @app.route('/recommend')
 def recommend_ui():
