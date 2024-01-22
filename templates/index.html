@@ -38,20 +38,23 @@
                 <h1 class="text-white" style="font-size:50px">Top 50 Anime</h1>
             </div>
 
-            {% for i in range(52) %}
-                <div class="col-md-3" style="margin-top:50px">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="image-container">
-                                <img class="card-img-top" src="{{ image[i] }}" alt="Description">
-                            </div>
-                            <p class="text-white">{{ anime_name[i] }}</p>
-                            <h4 class="text-white">Votes - {{ votes[i] }}</h4>
-                            <h4 class="text-white">Rating - {{ rating[i] }}</h4>
-                        </div>
+            {% for i in range(50) %}
+    <div class="col-md-3" style="margin-top:50px">
+        <div class="card">
+            <div class="card-body">
+                <a href="{{url[i]}}" target="_blank"> <!-- Replace "your_url_here" with the actual URL -->
+                    <div class="image-container">
+                        <img class="card-img-top" src="{{ image[i] }}" alt="Description">
                     </div>
-                </div>
-            {% endfor %}
+                </a>
+                <p class="text-white">{{ anime_name[i] }}</p>
+                <h4 class="text-white">Votes - {{ votes[i] }}</h4>
+                <h4 class="text-white">Rating - {{ rating[i] }}</h4>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
 
 
         </div>
