@@ -1,5 +1,6 @@
 # anime-recommendation-system
 website using py and flask which gives top 50 anime and recommends 10 anime based on the entered anime name
+I also added about file with hand written notes read it
 take the anime.csv and ratings.csv from the link given below 
 https://www.kaggle.com/code/astandrik/simple-anime-recommendation-system-content-based/input
 (I did all my operations on anime.csv but i would recommend not to download the anime.csv from the above link rather name the below csv file as anime.csv 
