@@ -3,4 +3,5 @@ numpy
 pandas==1.5.3
 fuzzywuzzy
 python-Levenshtein
+nltk
 gunicorn
