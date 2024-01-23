@@ -2,6 +2,10 @@ from flask import Flask,render_template,request
 import pickle
 import numpy as np
 from fuzzywuzzy import process
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
 most_popular_df = pickle.load(open('most_popular_df.pkl','rb'))
 pt_value = pickle.load(open('pt_value.pkl','rb'))
 similarity_scores = pickle.load(open('similarity_scores.pkl','rb'))
@@ -9,6 +13,26 @@ anime_url = pickle.load(open('anime_url.pkl','rb'))
 eng_title = pickle.load(open('eng_title.pkl','rb'))
 anime_url_id = pickle.load(open('anime_url_id.pkl','rb'))
 app = Flask(__name__)
+nltk.download('punkt')
+nltk.download('stopwords')
+
+def process_query(query):
+    # Tokenize the query
+    tokens = word_tokenize(query)
+
+    # Remove stopwords
+    additional_stopwords = {'please', 'recommend','would','like','search','know'}  # Add your additional words here
+    stop_words = set(stopwords.words('english') + list(additional_stopwords))
+    filtered_tokens = [word for word in tokens if word.lower() not in stop_words]
+
+    # Apply stemming
+    ps = PorterStemmer()
+    stemmed_tokens = [ps.stem(word) for word in filtered_tokens]
+
+    # Join the stemmed tokens into a string
+    processed_query = ' '.join(stemmed_tokens)
+
+    return processed_query
 
 @app.route('/')
 def index():
@@ -25,16 +49,30 @@ def recommend_ui():
 @app.route('/recommend_anime',methods =['post'])
 def recommend():
     user_input = request.form.get('user_input')
-    best_match1, score1 = process.extractOne(user_input, pt_value)
-    best_match2, score2 = process.extractOne(user_input, eng_title)
+    processed_query = process_query(user_input)
+    g_score1 = 75
+    g_score2 = 75
+
+    g_best_match_1, score1 = process.extractOne(processed_query, pt_value)
+    if score1>g_score1:
+            best_match1 = g_best_match_1
+            g_score1 = score1
+    g_best_match_2, score2 = process.extractOne(processed_query, eng_title)
+    if score2>g_score2:
+        best_match2 = g_best_match_2
+        g_score2 = score2
+    if max(g_score1,g_score2) < 80:
+        return render_template('error.html')
     #print(best_match)
-    if score1 >= score2:
+    if g_score1 >= g_score2:
         best_match = best_match1
         best_match3 = best_match1
         index = pt_value.index(best_match)
     else:
         best_match = anime_url_id.loc[anime_url_id['title_english'] == best_match2, 'title'].values
         best_match3 = best_match2
+        if best_match not in pt_value:
+            return render_template('error.html')
         index = pt_value.index(best_match)
     
     similar_items = sorted(list(enumerate(similarity_scores[index])),key=lambda x:x[1], reverse = True)[1:11]
